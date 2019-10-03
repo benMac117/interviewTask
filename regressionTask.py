@@ -17,9 +17,8 @@ trainingTargets = targets[trainingIndices]
 testingFeatures = features[testingIndices]
 testingTargets = targets[testingIndices]
 
-regr = LinearRegressor()
+regr = LinearRegressor(lRate= 0.05, epochCap=20000, loggingGap=500)
 regr.fit(trainingFeatues, trainingTargets)
 
 predictions = regr.predict(testingFeatures)
 
-# stretch to implement cross-validation

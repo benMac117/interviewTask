@@ -1,9 +1,10 @@
 import numpy as np
 
 class LinearRegressor:
-    def __init__(self, lRate=0.01, epochCap=100):
+    def __init__(self, lRate=0.01, epochCap=100, loggingGap=20):
         self.lRate = lRate # Learning rate for the model
         self.epochCap = epochCap # How may training iterations the model should take
+        self.loggingGap = loggingGap
 
     def cost(self, predictions, targets):
         """Calculate the current cost/loss for the model"""
@@ -35,7 +36,7 @@ class LinearRegressor:
         for epochCount in range(self.epochCap):
             predictions = self.predict(samples, self.weights)
 
-            if not epochCount % 1: # print the loss every 50 epochs
+            if not epochCount % self.loggingGap or epochCount == self.epochCap-1: # print the loss every 'loggingGap' epochs
                 loss = self.cost(predictions, targets)
                 print('Epochs: {}, loss: {}, weights: {}'.format(epochCount, loss, self.weights[:3]))
 
