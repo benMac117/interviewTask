@@ -1,7 +1,6 @@
 from __future__ import division
 import numpy as np
-
-
+from LinearRegressor import LinearRegressor
 
 dataFilepath = '/home/ben/Data/morsum/avocadoCleaned.csv'
 features = np.loadtxt(dataFilepath, delimiter=',', skiprows=1)

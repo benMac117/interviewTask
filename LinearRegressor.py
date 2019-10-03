@@ -5,11 +5,6 @@ class LinearRegressor:
         self.lRate = lRate # Learning rate for the model
         self.epochCap = epochCap # How may training iterations the model should take
 
-    # I'm including the weights as a parameter rather than using self.weights to make testing easier
-    def predict(self, samples, weights):
-        """Make a prediction for a given input"""
-        return np.dot(X, samples) # take the dot product of input with weights
-
     def cost(self, predictions, targets):
         """Calculate the current cost/loss for the model"""
         return np.mean(abs(targets - predictions))
@@ -21,14 +16,30 @@ class LinearRegressor:
     # This return value is purely to make testing more clean, happy to discuss whether it is correct
     # Same with using weights rather than just self.weights -= ...
     def apply_gradients(self, weights, lRate, gradients):
+        """Modify the model to minimise cost"""
         self.weights = weights - lRate * gradients
-        return self.weights 
+        return self.weights
+
+    # I'm including the weights as a nullable parameter rather than using self.weights to make testing easier
+    # This doesn't feel like the best solution
+    def predict(self, samples, weights=None):
+        """Make a prediction for a given input"""
+        if weights is None:
+            weights = self.weights
+        return np.dot(weights, samples.T) # take the dot product of input with weights
 
     def fit(self, samples, targets):
-        self.weights = np.zeros(samples.shape[1])
+        """Apply gradient decent to train a model given training data"""
+        self.weights = np.ones(samples.shape[1])
 
         for epochCount in range(self.epochCap):
-            predictions = self.predict(samples)
+            predictions = self.predict(samples, self.weights)
 
-            gradients = self.calculate_gradient(samples, predictions, targets)
+            if not epochCount % 1: # print the loss every 50 epochs
+                loss = self.cost(predictions, targets)
+                print('Epochs: {}, loss: {}, weights: {}'.format(epochCount, loss, self.weights[:3]))
+
+            gradients = self.calculate_gradients(samples, predictions, targets)
             self.apply_gradients(self.weights, self.lRate, gradients)
+
+    

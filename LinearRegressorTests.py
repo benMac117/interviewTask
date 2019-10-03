@@ -4,12 +4,6 @@ from LinearRegressor import LinearRegressor
 
 regr = LinearRegressor()
 
-# Testing the predict function
-prediction1 = regr.predict(np.array([1, 2, 3]), np.array([1, -1.1, 0.2]))
-prediction2 = regr.predict(np.array([1.5, 2000, 3, 11]), np.array([-0.3, 2, -2, 0.1]))
-prediction3 = regr.predict(np.array([100, 2, 3]), np.array([0.01, -0.75, 1.4]))
-print('predict tests: -0.6/{}, 3994.65/{}, 3.7/{}'.format(prediction1, prediction2, prediction3))
-
 # Testing the cost function
 costTest1 = regr.cost(np.array([1, 2, 3]), np.array([3, 2, 7]))
 costTest2 = regr.cost(np.array([1.5, 2000, 3, 11]), np.array([3, 2, 7, 11]))
@@ -27,3 +21,9 @@ gradApplyTest1 = regr.apply_gradients(np.array([1, 2, 3]), 0.1, np.array([3, 2, 
 gradApplyTest2 = regr.apply_gradients(np.array([1.5, 2000, 3, 11]), 10, np.array([3, 2, 7, 10]))
 gradApplyTest3 = regr.apply_gradients(np.array([100, 2, 3]), 0.01, np.array([-30, 202, -70]))
 print('apply_gradients tests: [0.7, 1.8, 2.3]/{}, [-28.5, 1980, -67, -89]/{}, [100.3, -0.02, 3.7]/{}'.format(gradApplyTest1, gradApplyTest2, gradApplyTest3))
+
+# Testing the predict function
+prediction1 = regr.predict(np.array([1, 2, 3]), np.array([1, -1.1, 0.2]))
+prediction2 = regr.predict(np.array([1.5, 2000, 3, 11]), np.array([-0.3, 2, -2, 0.1]))
+prediction3 = regr.predict(np.array([100, 2, 3]), np.array([0.01, -0.75, 1.4]))
+print('predict tests: -0.6/{}, 3994.65/{}, 3.7/{}'.format(prediction1, prediction2, prediction3))
