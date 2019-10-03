@@ -1,7 +1,7 @@
 import numpy as np
 
 class LinearRegressor:
-    def __init__(self, lRate=0.1, epochCap=100):
+    def __init__(self, lRate=0.01, epochCap=100):
         self.lRate = lRate # Learning rate for the model
         self.epochCap = epochCap # How may training iterations the model should take
 
@@ -41,5 +41,3 @@ class LinearRegressor:
 
             gradients = self.calculate_gradients(samples, predictions, targets)
             self.apply_gradients(self.weights, self.lRate, gradients)
-
-    
