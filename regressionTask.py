@@ -29,12 +29,13 @@ regr = LinearRegressor(lRate=0.05, epochCap=20000, loggingGap=500)
 trainingLosses = regr.fit(trainingFeatues, trainingTargets)
 
 # Print training loss over time
-# I would like to use a library for the logging
-with open('{}/Data/morsum/training.log'.format(homeDir), 'wb') as f:
-    for lossEntry in trainingLosses:
-        print(lossEntry)
-        f.write(str(lossEntry)+'\n')
+for lossEntry in trainingLosses:
+    print('Epoch: {}, loss: {}'.format(lossEntry[0], lossEntry[1]))
 
+# I would like to use a library for the logging rather than a csv
+np.savetxt('{}/Data/morsum/training.csv'.format(homeDir), trainingLosses, delimiter=',')
+
+# Make price predictions and save alongside ground truth
 predictions = regr.predict(testingFeatures)
 output = np.vstack((testingTargets, predictions))
 np.savetxt('{}/Data/morsum/output.csv'.format(homeDir), output, delimiter=',')
