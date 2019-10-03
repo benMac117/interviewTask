@@ -33,12 +33,15 @@ class LinearRegressor:
         """Apply gradient decent to train a model given training data"""
         self.weights = np.ones(samples.shape[1])
 
+        trainingLoss = []
         for epochCount in range(self.epochCap):
             predictions = self.predict(samples, self.weights)
 
             if not epochCount % self.loggingGap or epochCount == self.epochCap-1: # print the loss every 'loggingGap' epochs
                 loss = self.cost(predictions, targets)
-                print('Epochs: {}, loss: {}, weights: {}'.format(epochCount, loss, self.weights[:3]))
+                trainingLoss.append('Epochs: {}, loss: {}'.format(epochCount, loss))
 
             gradients = self.calculate_gradients(samples, predictions, targets)
             self.apply_gradients(self.weights, self.lRate, gradients)
+        # Might be better to have this written to a log file
+        return trainingLoss
