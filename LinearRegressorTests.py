@@ -9,12 +9,12 @@ costTest1 = regr.cost(np.array([1, 2, 3]), np.array([3, 2, 7]))
 costTest2 = regr.cost(np.array([1.5, 2000, 3, 11]), np.array([3, 2, 7, 11]))
 costTest3 = regr.cost(np.array([100, 2, 3]), np.array([3, 200, 7]))
 print('cost tests: 2/{}, 500.875/{}, 99.667.../{}'.format(costTest1, costTest2, costTest3))
- 
+
 # Testing the calculate_gradients function
-gradTest1 = regr.calculate_gradients(np.array([1, 2, 3]), np.array([3, 2, 7]), np.array([3, 2, 7]))
-gradTest2 = regr.calculate_gradients(np.array([1.5, 2000, 3, 11]), np.array([3, 2, 7, 11]), np.array([3, 2, 7, 10]))
-gradTest3 = regr.calculate_gradients(np.array([100, 2, 3]), np.array([3, 200, 7]), np.array([-30, 202, -70]))
-print('calculate_gradients tests: 0/{}, 2.75/{}, 1175/{}'.format(gradTest1, gradTest2, gradTest3))
+gradTest1 = regr.calculate_gradients(np.array([[1, 2], [2,3], [6,7]]), np.array([3, 2, 7]), np.array([3, 2, 7]))
+gradTest2 = regr.calculate_gradients(np.array([[1.5, 2000], [3, 11]]), np.array([3, 11]), np.array([3, 10]))
+gradTest3 = regr.calculate_gradients(np.array([[100, 2], [2,3], [1,-1]]), np.array([3, 200, 7]), np.array([-30, 202, -70]))
+print('calculate_gradients tests: [0,0]/{}, [1.5, 5.5]/{}, [1124, -6]/{}'.format(gradTest1, gradTest2, gradTest3))
 
 # Testing the apply_gradients function
 gradApplyTest1 = regr.apply_gradients(np.array([1, 2, 3]), 0.1, np.array([3, 2, 7]))
