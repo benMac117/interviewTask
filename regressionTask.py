@@ -1,9 +1,13 @@
 from __future__ import division
 import numpy as np
 from LinearRegressor import LinearRegressor
+from os.path import expanduser
 
+# If I couldn't use the os package I would either put everything in the same directory
+# or use explicit paths everywhere
+homeDir = expanduser('~') 
 # Load the features and targets from the .csv
-dataFilepath = '/home/ben/Data/morsum/avocadoCleaned.csv'
+dataFilepath = '{}/Data/morsum/avocadoCleaned.csv'.format(homeDir)
 features = np.loadtxt(dataFilepath, delimiter=',', skiprows=1)
 targets = features[:,-1]
 features = features[:,:-1]
@@ -24,9 +28,13 @@ testingTargets = targets[testingIndices]
 regr = LinearRegressor(lRate=0.05, epochCap=20000, loggingGap=500)
 trainingLosses = regr.fit(trainingFeatues, trainingTargets)
 
-for lossEntry in trainingLosses:
-    print(lossEntry)
+# Print training loss over time
+# I would like to use a library for the logging
+with open('{}/Data/morsum/training.log'.format(homeDir), 'wb') as f:
+    for lossEntry in trainingLosses:
+        print(lossEntry)
+        f.write(str(lossEntry)+'\n')
 
 predictions = regr.predict(testingFeatures)
-output = vstack(testingTargets, predictions)
-np.savetxt('/home/ben/Data/morsum/', output, delimiter=',')
+output = np.vstack((testingTargets, predictions))
+np.savetxt('{}/Data/morsum/output.csv'.format(homeDir), output, delimiter=',')

@@ -39,7 +39,7 @@ class LinearRegressor:
 
             if not epochCount % self.loggingGap or epochCount == self.epochCap-1: # print the loss every 'loggingGap' epochs
                 loss = self.cost(predictions, targets)
-                trainingLoss.append('Epochs: {}, loss: {}'.format(epochCount, loss))
+                trainingLoss.append({'epochs': epochCount, 'loss': loss})
 
             gradients = self.calculate_gradients(samples, predictions, targets)
             self.apply_gradients(self.weights, self.lRate, gradients)
