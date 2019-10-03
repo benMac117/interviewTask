@@ -2,23 +2,27 @@ import numpy as np
 
 class LinearRegressor:
     def __init__(self, lRate=0.1, epochCap=100):
-        self.lRate = lRate
-        self.epochCap = epochCap
+        self.lRate = lRate # Learning rate for the model
+        self.epochCap = epochCap # How may training iterations the model should take
 
-    def predict(self, X):
-        #throw error if weights don't exist yet
-        return np.dot(X, self.weights) # take the dot product of input with weights
+    # I'm including the weights as a parameter rather than using self.weights to make testing easier
+    def predict(self, X, weights):
+        """Make a prediction for a given input"""
+        return np.dot(X, weights) # take the dot product of input with weights
 
     def cost(self, yPred, yTrue):
+        """Calculate the current cost/loss for the model"""
         return np.mean(abs(yTrue - yPred))
 
     def calculate_gradients(self, X, yPred, y):
-        # same as linear regression, coursera
+        """Calculate the gradients for optimising the model parameters"""
         return np.dot(X.T, (yPred - y)) / len(X)
 
-    def apply_gradients(self, gradients):
-        self.weights -= self.lRate * gradients 
-
+    # This return value is purely to make testing more clean, happy to discuss whether it is correct
+    # Same with using weights rather than just self.weights -= ...
+    def apply_gradients(self, weights, lRate, gradients):
+        self.weights = weights - lRate * gradients
+        return self.weights 
 
     def fit(self, X, y):
         self.weights = np.zeros(X.shape[1])
