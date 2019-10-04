@@ -33,9 +33,12 @@ for lossEntry in trainingLosses:
     print('Epoch: {}, loss: {}'.format(lossEntry[0], lossEntry[1]))
 
 # I would like to use a library for the logging rather than a csv
-np.savetxt('{}/Data/morsum/training.csv'.format(homeDir), trainingLosses, delimiter=',')
+np.savetxt('{}/Data/morsum/training2.csv'.format(homeDir), trainingLosses, delimiter=',')
+
+# I would normally pickle this type of variable
+np.savetxt('{}/Data/morsum/model2.csv'.format(homeDir), weights, delimiter=',')
 
 # Make price predictions and save alongside ground truth
 predictions = regr.predict(testingFeatures)
 output = np.vstack((testingTargets, predictions))
-np.savetxt('{}/Data/morsum/output.csv'.format(homeDir), output, delimiter=',')
+np.savetxt('{}/Data/morsum/output2.csv'.format(homeDir), output, delimiter=',')

@@ -8,6 +8,7 @@ class LinearRegressor:
 
     def cost(self, predictions, targets):
         """Calculate the current cost/loss for the model"""
+        # I'm using the absolute rather than squared error to avoid spreading weights across a sparse feature set
         return np.mean(abs(targets - predictions))
 
     def calculate_gradients(self, samples, predictions, targets):
