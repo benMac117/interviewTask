@@ -109,13 +109,13 @@ def update_recipes(id):
     db.session.commit()
     return recipeSchema.jsonify(recipe)
 
-@app.route('/recipe/<id>', methods=['DELETE'])
+@app.route('/recipes/<id>', methods=['DELETE'])
 def delete_recipe(id):
     recipe = Recipe.query.get(id)
     db.session.delete(recipe)
     db.session.commit()
 
-    return product_schema.jsonify(product), 202
+    return recipeSchema.jsonify(recipe), 202
 
 # Ingredient routing
 @app.route('/ingredients', methods=['POST'])
@@ -133,23 +133,23 @@ def get_ingredients():
 # Get single ingredient
 @app.route('/ingredients/<id>', methods=['GET'])
 def get_ingredient(id):
-    return ingredientsSchema.jsonify(Ingredient.query.get(id))
+    return ingredientSchema.jsonify(Ingredient.query.get(id))
 
 @app.route('/ingredients/<id>', methods=['PUT'])
-def update_product(id):
+def update_ingredient(id):
     ingredient = Ingredient.query.get(id)
     ingredient.name = request.json['name']
     
     db.session.commit()
-    return recipeSchema.jsonify(ingredient)
+    return ingredientSchema.jsonify(ingredient)
 
 @app.route('/ingredients/<id>', methods=['DELETE'])
-def delete_recipe(id):
+def delete_ingredient(id):
     ingredient = Ingredient.query.get(id)
     db.session.delete(ingredient)
     db.session.commit()
 
-    return product_schema.jsonify(product), 202
+    return ingredientSchema.jsonify(ingredient), 202
 
 if __name__ == '__main__':
     # debug=True should only be used during development
