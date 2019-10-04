@@ -3,31 +3,28 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import cPickle as cP
 import DBModels
-
 from sqlalchemy import Table, Column, Integer, ForeignKey, String
-
-app = Flask(__name__)
 
 # trying to avoid saving the password in plain text
 with open('config') as f:
    passw = cP.load(f)
 
-# I think ideally this should have a different user
+# initialise flask and database libraries
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://ben:{}@localhost/recipeBook'.format(passw)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
-# Init ma
 ma = Marshmallow(app)
 
 
 # The first time this is run on a machine we need to run db.create_all() to create the tables in the database
-# Create a table of links to hold the mabny-to-many relationship between recipes and ingredients
+# creating a table of links to hold the many-to-many relationship between recipes and ingredients
 used = db.Table('used',
     db.Column('recipeID', Integer, db.ForeignKey('Recipe.id')),
     db.Column('ingredientID', Integer, db.ForeignKey('Ingredient.id')),
 )
 
+# class for the recipe model
 class Recipe(db.Model):
     __tablename__ = 'Recipe'
     id = Column(Integer, primary_key=True)
@@ -42,6 +39,7 @@ class Recipe(db.Model):
     def add_ingredients(ingredientList):
         self.ingredients = ingredientList
 
+# class for the ingredient model
 class Ingredient(db.Model):
     __tablename__ = 'Ingredient'
     id = Column(Integer, primary_key=True)
@@ -50,8 +48,9 @@ class Ingredient(db.Model):
     def __init__(self, name):
         self.name = name
 
-# model schemas
+# model schemas - allow easy transport through JSON
 class RecipeSchema(ma.Schema):
+    # these nested specifications are required to prevent infinite recursion in the many-to-many relationship
     ingredients = ma.Nested('IngredientSchema', many=True, exclude=("recipes",))
     class Meta:
         fields = ('id', 'name', 'instructions', 'ingredients')
@@ -67,6 +66,7 @@ recipesSchema = RecipeSchema(strict=True, many=True)
 ingredientSchema = IngredientSchema(strict=True)
 ingredientsSchema = IngredientSchema(strict=True, many=True)
 
+# abstracting the database commit and exception handling
 def commit_to_db(db):
     try:
         db.session.commit()
@@ -74,7 +74,7 @@ def commit_to_db(db):
         print('An error occured when committing a change to the database')
         raise e
 
-# generic CRUD operations
+# generic get all function
 def handleGetAll(modelClass, schema):
     result = recipesSchema.dump(modelClass.query.all())
     return jsonify(result.data)
@@ -98,6 +98,7 @@ def get_recipes():
 def get_recipe(id):
     return recipeSchema.jsonify(Recipe.query.get(id))
 
+# Edit a recipe. This is also where ingredients can be added to recipes via their ID
 @app.route('/recipes/<id>', methods=['PUT'])
 def update_recipes(id):
     recipe = Recipe.query.get(id)
@@ -106,18 +107,21 @@ def update_recipes(id):
     ingredientIDs = request.json['ingredientIDs']
     recipe.ingredients = [Ingredient.query.get(ingID) for ingID in ingredientIDs]
 
-    db.session.commit()
+    commit_to_db(db)
     return recipeSchema.jsonify(recipe)
 
+# Delete a recipe
+# This will also remove the recipe from the 'recipes' list of ingredients which are included in it
 @app.route('/recipes/<id>', methods=['DELETE'])
 def delete_recipe(id):
     recipe = Recipe.query.get(id)
     db.session.delete(recipe)
-    db.session.commit()
+    commit_to_db(db)
 
     return recipeSchema.jsonify(recipe), 202
 
 # Ingredient routing
+# Creating an ingredient
 @app.route('/ingredients', methods=['POST'])
 def add_ingredient():
     newIngredient = Ingredient(request.json['name'])
@@ -125,7 +129,7 @@ def add_ingredient():
     commit_to_db(db)
     return ingredientSchema.jsonify(newIngredient), 201
 
-# Get all ingredient
+# Get all ingredients
 @app.route('/ingredients', methods=['GET'])
 def get_ingredients():
     return handleGetAll(Ingredient, ingredientsSchema)
@@ -135,19 +139,22 @@ def get_ingredients():
 def get_ingredient(id):
     return ingredientSchema.jsonify(Ingredient.query.get(id))
 
+# Editing an ingredient
 @app.route('/ingredients/<id>', methods=['PUT'])
 def update_ingredient(id):
     ingredient = Ingredient.query.get(id)
     ingredient.name = request.json['name']
     
-    db.session.commit()
+    commit_to_db(db)
     return ingredientSchema.jsonify(ingredient)
 
+# Deleting an ingredient
+# This will also remove the ingredient from the 'ingredients' list of the receipes which include it
 @app.route('/ingredients/<id>', methods=['DELETE'])
 def delete_ingredient(id):
     ingredient = Ingredient.query.get(id)
     db.session.delete(ingredient)
-    db.session.commit()
+    commit_to_db(db)
 
     return ingredientSchema.jsonify(ingredient), 202
 
