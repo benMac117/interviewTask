@@ -21,7 +21,7 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
-
+# The first time this is run on a machine we need to run db.create_all() to create the tables in the database
 # Create a table of links to hold the mabny-to-many relationship between recipes and ingredients
 used = db.Table('used',
     db.Column('recipeID', Integer, db.ForeignKey('Recipe.id')),
@@ -71,8 +71,13 @@ def commit_to_db(db):
     try:
         db.session.commit()
     except Exception as e:
-        print('An error occured when committing change to the database')
-        print(e)
+        print('An error occured when committing a change to the database')
+        raise e
+
+# generic CRUD operations
+def handleGetAll(modelClass, schema):
+    result = recipesSchema.dump(modelClass.query.all())
+    return jsonify(result.data)
 
 # Recipe routing
 # Create a recipe
@@ -86,29 +91,31 @@ def add_recipe():
 # Get all recipes
 @app.route('/recipes', methods=['GET'])
 def get_recipes():
-    allRecipes = Recipe.query.all()
-    result = recipesSchema.dump(allRecipes)
-    return jsonify(result.data)
+    return handleGetAll(Recipe, recipesSchema)
 
 # Get single recipe
 @app.route('/recipes/<id>', methods=['GET'])
 def get_recipe(id):
-    recipe = Recipe.query.get(id)
-    return recipeSchema.jsonify(recipe)
+    return recipeSchema.jsonify(Recipe.query.get(id))
 
 @app.route('/recipes/<id>', methods=['PUT'])
 def update_recipes(id):
     recipe = Recipe.query.get(id)
-
     recipe.name = request.json['name']
     recipe.instructions = request.json['instructions']
     ingredientIDs = request.json['ingredientIDs']
-    #from IPython import embed; embed()
     recipe.ingredients = [Ingredient.query.get(ingID) for ingID in ingredientIDs]
 
     db.session.commit()
-
     return recipeSchema.jsonify(recipe)
+
+@app.route('/recipe/<id>', methods=['DELETE'])
+def delete_recipe(id):
+    recipe = Recipe.query.get(id)
+    db.session.delete(recipe)
+    db.session.commit()
+
+    return product_schema.jsonify(product), 202
 
 # Ingredient routing
 @app.route('/ingredients', methods=['POST'])
@@ -116,40 +123,34 @@ def add_ingredient():
     newIngredient = Ingredient(request.json['name'])
     db.session.add(newIngredient)
     commit_to_db(db)
-    print(newIngredient)
     return ingredientSchema.jsonify(newIngredient), 201
 
-# Get all recipes
+# Get all ingredient
 @app.route('/ingredients', methods=['GET'])
 def get_ingredients():
-    allIngredients = Ingredient.query.all()
-    result = ingredientsSchema.dump(allIngredients)
-    return jsonify(result.data)
-'''
-# Update a product
-@app.route('/product/<id>', methods=['PUT'])
+    return handleGetAll(Ingredient, ingredientsSchema)
+
+# Get single ingredient
+@app.route('/ingredients/<id>', methods=['GET'])
+def get_ingredient(id):
+    return ingredientsSchema.jsonify(Ingredient.query.get(id))
+
+@app.route('/ingredients/<id>', methods=['PUT'])
 def update_product(id):
-    product = Product.query.get(id)
-
-    product.name = request.json['name']
-    product.description = request.json['description']
-    product.price = request.json['price']
-    product.qty = request.json['qty']
-
+    ingredient = Ingredient.query.get(id)
+    ingredient.name = request.json['name']
+    
     db.session.commit()
+    return recipeSchema.jsonify(ingredient)
 
-    return product_schema.jsonify(product)
-
-# Delete product
-@app.route('/product/<id>', methods=['DELETE'])
-def delete_product(id):
-    product = Product.query.get(id)
-    db.session.delete(product)
+@app.route('/ingredients/<id>', methods=['DELETE'])
+def delete_recipe(id):
+    ingredient = Ingredient.query.get(id)
+    db.session.delete(ingredient)
     db.session.commit()
 
     return product_schema.jsonify(product), 202
 
-'''
 if __name__ == '__main__':
     # debug=True should only be used during development
     app.run(debug=True)
