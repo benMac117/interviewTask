@@ -25,8 +25,8 @@ testingTargets = targets[testingIndices]
 
 # Create and train the regression model with the training data
 # I chose these hyperparameters after a little manual experimentation plotting the training loss
-regr = LinearRegressor(lRate=0.05, epochCap=20000, loggingGap=500)
-trainingLosses = regr.fit(trainingFeatues, trainingTargets)
+regr = LinearRegressor(lRate=0.05, epochCap=15000, loggingGap=500)
+trainingLosses, weights = regr.fit(trainingFeatues, trainingTargets)
 
 # Print training loss over time
 for lossEntry in trainingLosses:
