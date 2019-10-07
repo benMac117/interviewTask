@@ -1,4 +1,4 @@
-# Morsum interview coding task
+# Interview coding task
 
 I used Python 2.7 for these tasks.
 
