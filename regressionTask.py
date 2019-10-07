@@ -7,7 +7,7 @@ from os.path import expanduser
 # or use explicit paths everywhere
 homeDir = expanduser('~') 
 # Load the features and targets from the .csv
-dataFilepath = '{}/Data/morsum/avocadoCleaned.csv'.format(homeDir)
+dataFilepath = '{}/Data/avocadoCleaned.csv'.format(homeDir)
 features = np.loadtxt(dataFilepath, delimiter=',', skiprows=1)
 targets = features[:,-1]
 features = features[:,:-1]
@@ -33,12 +33,12 @@ for lossEntry in trainingLosses:
     print('Epoch: {}, loss: {}'.format(lossEntry[0], lossEntry[1]))
 
 # I would like to use a library for the logging rather than a csv
-np.savetxt('{}/Data/morsum/training2.csv'.format(homeDir), trainingLosses, delimiter=',')
+np.savetxt('{}/Data/training2.csv'.format(homeDir), trainingLosses, delimiter=',')
 
 # I would normally pickle this type of variable
-np.savetxt('{}/Data/morsum/model2.csv'.format(homeDir), weights, delimiter=',')
+np.savetxt('{}/Data/model2.csv'.format(homeDir), weights, delimiter=',')
 
 # Make price predictions and save alongside ground truth
 predictions = regr.predict(testingFeatures)
 output = np.vstack((testingTargets, predictions))
-np.savetxt('{}/Data/morsum/output2.csv'.format(homeDir), output, delimiter=',')
+np.savetxt('{}/Data/output2.csv'.format(homeDir), output, delimiter=',')
