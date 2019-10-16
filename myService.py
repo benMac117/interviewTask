@@ -4,6 +4,7 @@ import flask_marshmallow
 import cPickle as cP
 import DBModels
 
+
 # trying to avoid saving the password in plain text
 with open('config') as f:
    passw = cP.load(f)
