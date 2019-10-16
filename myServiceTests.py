@@ -33,12 +33,33 @@ baconMacRecipe = {
 }
 requests.post('http://localhost:5000/recipes', json=baconMacRecipe)
 
+# create chicken parma ham recipe
+baconMacRecipe = {
+    'name': 'Bacon mac and cheese',
+    'instructions': 'Cook some pasta, then mix it with cheese and bacon'
+}
+
+# create chicken parma ham recipe
+chickenRecipe = {
+    'name': 'Chicken Parma ham',
+    'instructions': 'Cut a slit in chicken, stuff with half of the blue cheese. Wrap chicken in parma ham, lay on spinach in casserole dish. Pour over creme fraiche, add nugmeg and remaining blue cheese. Place in preheated oven, 180c for 40 minutes'
+}
+
+requests.post('http://localhost:5000/recipes', json=baconMacRecipe)
+
 # create ingredients
 requests.post('http://localhost:5000/ingredients', json={'name': 'Ham'})
 requests.post('http://localhost:5000/ingredients', json={'name': 'Cheese'})
 requests.post('http://localhost:5000/ingredients', json={'name': 'Bread'})
 requests.post('http://localhost:5000/ingredients', json={'name': 'Bacon'})
 requests.post('http://localhost:5000/ingredients', json={'name': 'Pasta'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Chicken'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Parma ham'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Blue cheese'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Creme fraiche'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Nutmeg'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Spinach'})
+requests.post('http://localhost:5000/ingredients', json={'name': 'Potatoes'})
 
 # get IDs for current recipes and ingredients
 recipes = requests.get('http://localhost:5000/recipes')
@@ -60,6 +81,12 @@ requests.put('http://localhost:5000/recipes/{}'.format(baconSandID), json=baconS
 baconMacRecipe['ingredientIDs'] = [ingredientIDMapper[ingName] for ingName in ['Bacon', 'Cheese', 'Pasta']]
 baconMacID = recipeIDMapper[baconMacRecipe['name']]
 requests.put('http://localhost:5000/recipes/{}'.format(baconMacID), json=baconMacRecipe)
+
+# add ingredients to bacon mac
+baconMacRecipe['ingredientIDs'] = [ingredientIDMapper[ingName] for ingName in ['Bacon', 'Cheese', 'Pasta']]
+baconMacID = recipeIDMapper[baconMacRecipe['name']]
+requests.put('http://localhost:5000/recipes/{}'.format(baconMacID), json=baconMacRecipe)
+
 
 print('===Getting all recipes===')
 allRecipes = requests.get('http://localhost:5000/recipes').json()
